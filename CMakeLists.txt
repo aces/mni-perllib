@@ -3,14 +3,19 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 # quick and dirty hack to install mni-perllib using CMake
 # TODO: make it proper
+SET(DEFAULT_DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/mni-models")
+
+
+CONFIGURE_FILE(MNI/DataDir.pm.in ${CMAKE_CURRENT_BINARY_DIR}/DataDir.pm @ONLY)
 
 INSTALL(FILES 
-  MNI.pm
-  DESTINATION perl)
+   MNI.pm
+   mni_perllib.pod
+  DESTINATION 
+   perl)
 
 INSTALL(FILES 
     MNI/Compress.pm
-    MNI/DataDir.pm.in
     MNI/FileUtilities.pm
     MNI/MincUtilities.pm
     MNI/MiscUtilities.pm
@@ -22,5 +27,6 @@ INSTALL(FILES
     MNI/Tag.pm
     MNI/TagPoint.pm
     MNI/TagSet.pm
+    ${CMAKE_CURRENT_BINARY_DIR}/DataDir.pm
   DESTINATION 
     perl/MNI )
