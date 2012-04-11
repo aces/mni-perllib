@@ -1,10 +1,14 @@
 project(mni-perllib)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+IF(NOT MINC_TOOLKIT_BUILD)
+  FIND_PACKAGE( Perl REQUIRED )
+ENDIF(NOT MINC_TOOLKIT_BUILD)
+
+
 # quick and dirty hack to install mni-perllib using CMake
 # TODO: make it proper
 SET(DEFAULT_DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/mni-models")
-
 
 CONFIGURE_FILE(MNI/DataDir.pm.in ${CMAKE_CURRENT_BINARY_DIR}/DataDir.pm @ONLY)
 
@@ -14,19 +18,36 @@ INSTALL(FILES
   DESTINATION 
    perl)
 
-INSTALL(FILES 
-    MNI/Compress.pm
-    MNI/FileUtilities.pm
-    MNI/MincUtilities.pm
-    MNI/MiscUtilities.pm
-    MNI/NumericUtilities.pm
-    MNI/PathUtilities.pm
-    MNI/Spawn.pm
-    MNI/Spawn.pod
-    MNI/Startup.pm
-    MNI/Tag.pm
-    MNI/TagPoint.pm
-    MNI/TagSet.pm
+SET( MNI_PERLLIB_MODULES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/Compress.pm
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/FileUtilities.pm
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/MincUtilities.pm
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/MiscUtilities.pm
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/NumericUtilities.pm
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/PathUtilities.pm
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/Spawn.pm
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/Startup.pm
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/Tag.pm
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/TagPoint.pm
+    ${CMAKE_CURRENT_SOURCE_DIR}/MNI/TagSet.pm
     ${CMAKE_CURRENT_BINARY_DIR}/DataDir.pm
+)
+
+INSTALL(FILES 
+    ${MNI_PERLLIB_MODULES}
+    MNI/Spawn.pod
   DESTINATION 
     perl/MNI )
+
+
+execute_process(COMMAND 
+  ${PERL_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/autosplit.pl" "${CMAKE_CURRENT_SOURCE_DIR}/MNI.pm" "${CMAKE_CURRENT_BINARY_DIR}/perl/auto" )
+
+# now create autoload files
+foreach(pm ${MNI_PERLLIB_MODULES})
+  execute_process(COMMAND 
+   ${PERL_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/autosplit.pl" "${pm}" "${CMAKE_CURRENT_BINARY_DIR}/perl/auto" )
+endforeach(pm)
+
+# install generated auto
+INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/perl DESTINATION .)
