@@ -18,6 +18,7 @@
 #-----------------------------------------------------------------------------
 
 package MNI::Startup;
+__END__
 
 use strict;
 use vars qw(@EXPORT_OK %EXPORT_TAGS);

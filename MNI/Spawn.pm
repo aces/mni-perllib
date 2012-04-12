@@ -24,6 +24,7 @@
 #-----------------------------------------------------------------------------
 
 package MNI::Spawn;
+__END__
 
 use strict;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $ProgramName);
