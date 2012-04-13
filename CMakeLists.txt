@@ -46,7 +46,6 @@ INSTALL(FILES
 # now create autoload files
 foreach(pm  ${MNI_PERLLIB_MODULES} )
   get_filename_component(mod_name ${pm} NAME)
-  message( "auto_${mod_name}" )
   add_custom_target("auto_${mod_name}" ALL
     COMMAND  ${PERL_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/autosplit.pl" "${pm}" "${CMAKE_CURRENT_BINARY_DIR}/perl/auto" )
 endforeach(pm)
