@@ -24,7 +24,6 @@
 #-----------------------------------------------------------------------------
 
 package MNI::Spawn;
-__END__
 
 use strict;
 use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $ProgramName);
@@ -1347,3 +1346,5 @@ sub ClearDefaultArgs  { $default_spawner->clear_default_args (@_); }
 sub Spawn             { $default_spawner->spawn (@_); }
 
 1;
+
+__END__

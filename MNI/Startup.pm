@@ -18,7 +18,6 @@
 #-----------------------------------------------------------------------------
 
 package MNI::Startup;
-__END__
 
 use strict;
 use vars qw(@EXPORT_OK %EXPORT_TAGS);
@@ -934,3 +933,5 @@ distributed under the same terms as Perl itself.
 =cut
 
 1;
+
+__END__

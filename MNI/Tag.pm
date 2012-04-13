@@ -382,3 +382,5 @@ sub _read_label {
 }
 
 1;
+
+__END__
