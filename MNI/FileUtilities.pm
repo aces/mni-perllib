@@ -859,6 +859,7 @@ sub search_directories
    foreach $dir (@dirs)
    {
       $_ = $dir . $file;
+      use filetest 'access';
       $found = eval $test;
       croak ("bad test: $test ($@)") if $@;
       return $dir if $found;
