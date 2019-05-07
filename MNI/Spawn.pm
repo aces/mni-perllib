@@ -15,7 +15,7 @@
 #@CREATED    : 1997/07/07, Greg Ward (loosely based on JobControl.pm, rev 2.8)
 #@MODIFIED   : 1998/11/06, Chris Cocosco (added batch support) -- STILL BETA!
 #
-#@VERSION    : $Id: Spawn.pm,v 1.16 2001-06-10 02:14:06 crisco Exp $
+#@VERSION    : $Id: Spawn.pm,v 1.17 2014/10/06 19:54:55 claude Exp $
 #@COPYRIGHT  : Copyright (c) 1997 by Gregory P. Ward, McConnell Brain Imaging
 #              Centre, Montreal Neurological Institute, McGill University.
 #
@@ -340,7 +340,6 @@ sub spawn
    $self->set_undefined_option ('verbose', 'Verbose');
    $self->set_undefined_option ('execute', 'Execute');
 
-
    # Complete the command (ie. program name to full path, insert
    # options fore and aft)
    # 
@@ -412,6 +411,7 @@ _END_
        #        [CC:98/11/06]
        ################################################################
        #
+
        croak "Batch package not loaded -- you must do \"use MNI::Batch;\""
 	   if (! defined &MNI::Batch::QueueCommand);
        &MNI::Batch::QueueCommand( $command, 
@@ -430,7 +430,6 @@ _END_
       if ($stdout_mode == REDIRECT && $stdout !~ /^>/);
    $stderr = $open_prefix . $stderr 
       if ($stderr_mode == REDIRECT && $stderr !~ /^>/);
-
 
    # Warn if the user is calling us in array context
 
@@ -477,12 +476,12 @@ _END_
    if ($stdout_mode == CAPTURE)         # capturing to a variable?
    {
       $self->spawn_capture ($command, $program,
-                            $stdout_mode, $stdout, $stderr_mode, $stderr);
+                            $stdout_mode, $stdout, $stderr_mode, $stderr );
    }
    else
    {
       $self->spawn_redirect ($command, $program,
-                             $stdout_mode, $stdout, $stderr_mode, $stderr);
+                             $stdout_mode, $stdout, $stderr_mode, $stderr );
    }
 }
 
@@ -917,7 +916,7 @@ sub output_mode
 #-----------------------------------------------------------------------------
 sub exec_command
 {
-   my ($command, $program, $stdout_mode, $stdout, $stderr_mode, $stderr) = @_;
+   my ($command, $program, $stdout_mode, $stdout, $stderr_mode, $stderr, $verbose) = @_;
 
    # Redirect stdout and/or stderr if the caller specified file
    # destination(s) (also possibly "capture" stderr via temp file)
@@ -958,10 +957,19 @@ sub exec_command
    # warning on failed exec, which would be redundant (due to 'die' below)
 
    {
+      if( $verbose ) {
+        my $uname = `uname -s -n -r`; chomp( $uname );
+        my $date = `date`; chomp( $date );
+        print "Start running on: $uname at $date\n";
+      }
       local $^W = 0;
-      (ref $command)
-         ? exec @$command
-         : exec $command;
+      if(ref $command) {
+        print "@$command\n" if( $verbose );;
+        exec @$command
+      } else {
+        print "$command\n" if( $verbose );;
+        exec $command;
+      }
    }
 
    # If we get here, the exec failed -- this should not normally happen
@@ -1299,7 +1307,7 @@ sub spawn_capture
    if ($pid == 0)                       # if in the child, then exec --
    {                                    # this doesn't return!
       exec_command ($command, $program,
-                    $stdout_mode, $stdout, $stderr_mode, $stderr);
+                    $stdout_mode, $stdout, $stderr_mode, $stderr, $self->{verbose});
    }
 
    # $pid is not 0, so we're in the parent.  We read in the child's stdout
@@ -1356,7 +1364,7 @@ sub spawn_redirect
    if ($pid == 0)                       # if in the child, then exec --
    {                                    # this doesn't return!
       exec_command ($command, $program,
-                    $stdout_mode, $stdout, $stderr_mode, $stderr);
+                    $stdout_mode, $stdout, $stderr_mode, $stderr, $self->{verbose} );
    }
 
 
