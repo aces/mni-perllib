@@ -1,3 +1,9 @@
+2019-05-07  Claude Lepage  <claude@bic.mni.mcgill.ca>
+	* added ChangeLog and NEWS to MANIFEST for proper packaging
+
+2014-10-06  Claude Lepage  <claude@bic.mni.mcgill.ca>
+	* extended Spawn.pm to print extra info in the log file in verbose mode
+
 2007-09-14  Claude Lepage  <claude@bic.mni.mcgill.ca>
 	* fixed get_dimension_order to report proper dimension order with minc2
 
